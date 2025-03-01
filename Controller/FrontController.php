@@ -13,7 +13,9 @@ class FrontController extends AbstractController
         $data = [
             "titre" => "home",
             "etudiants" => BDD::getInstance()->query("
-                SELECT *
+                SELECT *,
+                DATE_FORMAT(dt_naissance, '%d/%m/%Y') AS dt_naissance,
+                DATE_FORMAT(dt_mise_a_jour, '%d/%m/%Y') AS dt_mise_a_jour
                 FROM etudiants
             ")
         ];
@@ -99,32 +101,52 @@ class FrontController extends AbstractController
 
 
 
-    public function delete(string $id)
+    public function delete(int $id)
     {
-        try{
-            $id = $_GET["id"] ?? null;
-                if(!$id){
-                    echo "ID est Invalid";
-                    return;
-                }
-
-      
-       BDD::getInstance()->query("DELETE FROM etudiants WHERE id = :id", ["id" => $id]);
        
 
-        $this->render("index.php");
-        exit;
-        } catch(Exception $e){
-
-            error_log("Error en delete" . $e->getMessage());
-            echo "Un error est survenu";
+        $id = $_GET["id"] ?? null;
+        if(!$id){
+            echo "ID est Invalid";
+            return;
         }
-           
+        
+        
+           $etudiants = BDD::getInstance()->query("SELECT * FROM etudiants WHERE id = :id", ["id" => $id]);  
+        
+        
+        if(empty($etudiants)){
+            $data = [
+                "titre" => "impossible de supprimer le profil etudiant",
+                "contenu" => [
+                    "num" => 404,
+                    "message" => "le profil que vous souhaitez supprimer n'existe pas"
+                ]
+                ];
+            $this->render("erreur" , $data);
+            die(); 
+        
+         
+    try {
+        BDD::getInstance()->query("DELETE FROM etudiants WHERE id = :id", ["id" => $id]);
+    } catch (Exception $e) {
+        error_log("Error in delete: " . $e->getMessage());
+        echo "An error occurred.";
+        return;
+    }       
+
+
+        header("Location:" . URL ."?");
+        exit;
+          
+        
+     }
     }
 
-    public function update(string $id)
+    
+    public function update(int $id)
     {
-
+       
         $etudiants = BDD::getInstance()->query("SELECT * FROM etudiants WHERE id = :id", ["id" => $id]);
 
         if (empty($etudiants)) {
@@ -155,10 +177,13 @@ class FrontController extends AbstractController
             $email = isset($_POST["email"]) ? $_POST["email"] : $email;
             $cv = isset($_POST["cv"]) ? $_POST["cv"] : $cv;
 
-            $dt_naissance = isset($_POST["dt_naissance"]) ? $_POST["dt_naissance"] : $dt_naissance;
-
+            if (isset($_POST["dt_naissance"]) ? $_POST["dt_naissance"] : $dt_naissance){ 
+            
+            $dt_naissance = DateTime::createFromFormat('d/m/Y', $_POST["dt_naissance"])->format('Y-m-d');
+            }
             $isAdmin = isset($_POST["isAdmin"]) && $_POST["isAdmin"] ? 1 : 0;
 
+             
 
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -167,9 +192,10 @@ class FrontController extends AbstractController
             $etudiants = BDD::getInstance()->query("SELECT * FROM etudiants WHERE email = :email", ["email" => $email]);
 
             if (!empty($etudiants) || $_SESSION["etudiants"]["email"] == $email) {
+              
                 $erreurs[] = "l'email soumis est déjà utilisé, veuillez en choisir un autre";
             }
-
+         
             if (count($erreurs) === 0 && !empty($_POST)) {
                 BDD::getInstance()->query("UPDATE etudiants SET prenom = :prenom, nom = :nom, email = :email, cv = :cv, dt_naissance = :dt_naissance, isAdmin = :isAdmin, WHERE id = :id", [
                     "id" => $id,
@@ -180,16 +206,7 @@ class FrontController extends AbstractController
                     "dt_naissance" => $dt_naissance,
                     "isAdmin" => $isAdmin,
                 ]);
-            } else {
-                BDD::getInstance()->query("UPDATE etudiants SET prenom = :prenom, nom = :nom, email = :email, cv = :cv, dt_naissance = :dt_naissance, isAdmin = 1, WHERE id = :id", [
-                    "id" => $id,
-                    "prenom" => $prenom,
-                    "nom" => $nom,
-                    "email" => $email,
-                    "cv" => $cv,
-                    "dt_naissance" => $dt_naissance,
-                    "isAdmin" => $isAdmin,
-                ]);
+           
             }
             header("Location: " . URL . "?");
             die();
@@ -215,7 +232,7 @@ class FrontController extends AbstractController
 
     public function profile(string $id)
     { 
-        $sql = "SELECT prenom, nom, email, cv, DATE_FORMAT(dt_naissance , '%d/%m/%Y %H:%i:%s') AS dt_naissance
+        $sql = "SELECT id, prenom, nom, email, cv, DATE_FORMAT(dt_naissance , '%d/%m/%Y') AS dt_naissance
         FROM etudiants
         WHERE etudiants.id = :id";
 
@@ -243,7 +260,7 @@ class FrontController extends AbstractController
             $this->render("erreur" , $data);
             die(); 
         }
-
+        //var_dump($etudiants);
         $data = [
             "titre" =>"Profil de l'étudiant",
             "etudiants" => $etudiants,
@@ -254,6 +271,6 @@ class FrontController extends AbstractController
             "cv" => $etudiants[0]["cv"],
            "dt_naissance" => $etudiants[0]["dt_naissance"]
         ];
-       $this->render("profile/id", $data);
+       $this->render("profile", $data);
     }
 }

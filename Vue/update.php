@@ -1,12 +1,12 @@
 <main class="container">
-   <h1>Je suis la page update de l'etudiant</h1>
+   <h1>La page update de l'etudiant</h1>
    <section class="row">
         <div class="col-3">
 
         </div>
         <div class="col-9">
-            <form method="POST" action="<?php echo $this->generateUrl('update_student', ['id' => $data_form['id']]); ?>">
-            <input type="hidden" name="id" value="<?php echo $data_form["id"] ?>">
+            <form method="POST" action="<?php echo URL; ?>?page=update">
+            <input type="hidden" name="id" value="<?php echo $data_form["id"]; ?>">
            
                 <div class="mb-3">
                     <label for="prenom">prenom</label>
