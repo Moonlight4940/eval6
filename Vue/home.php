@@ -19,19 +19,20 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($etudiants as $etudiants) : ?>
+                    <?php foreach ($etudiants as $etudiant) : ?>
                         <tr>
-                            <td><?php echo $etudiants["id"] ?></td>
-                            <td><?php echo $etudiants["prenom"] ?></td>
-                            <td><?php echo $etudiants["nom"] ?></td>
-                            <td><?php echo $etudiants["email"] ?></td>
-                            <td><?php echo $etudiants["cv"] ?></td>
-                            <td><?php echo $etudiants["dt_naissance"] ?></td>
-                            <td class="text-center"><?php echo $etudiants["isAdmin"] == 1 ? "✅" : "❌" ?></td>
-                            <td><?php echo $etudiants["dt_mise_a_jour"] ?></td>
+                            <td><a href="profile/<?php echo $etudiant["id"]?>"><?php echo $etudiant["id"] ?></a></td>
+                            <td><?php echo $etudiant["prenom"] ?></td>
+                            <td><?php echo $etudiant["nom"] ?></td>
+                            <td><?php echo $etudiant["email"] ?></td>
+                            <td><?php echo $etudiant["cv"] ?></td>
+                            <td><?php echo $etudiant["dt_naissance"] ?></td>
+                            <td class="text-center"><?php echo $etudiant["isAdmin"] == 1 ? "✅" : "❌" ?></td>
+                            <td><?php echo $etudiant["dt_mise_a_jour"] ?></td>
                             <td>
-                            <a href="<?php echo URL ?>?page=etudiants/update&?id=<?php echo $etudiants["id"] ?>" class="btn btn-outline-dark me-3 mb-1 btn-sm">update</a>
-                            <a href="<?php echo URL ?>?page=etudiants/delete&?id=<?php echo $etudiants["id"] ?>" class="btn btn-outline-danger me-3 btn-sm" onclick="return confirm('êtes vous sûr de vouloir supprimer?')">delete</a>
+                            <a href="update/<?php echo $etudiant["id"]; ?>" class="btn btn-outline-dark me-3 mb-1 btn-sm">update</a>
+                            <a href="delete/<?php echo $etudiant["id"]; ?>" class="btn btn-outline-danger me-3 btn-sm" onclick="return confirm('êtes vous sûr de vouloir supprimer?')">delete</a>
+                            </td>
                         </tr>
                     <?php endforeach ?>
                 </tbody>

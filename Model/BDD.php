@@ -12,7 +12,7 @@ class BDD{
         return self::$instance ;
     }
 
-    private function __construct() //methode magique
+    private function __construct() 
     {
         $dsn = "mysql:host=localhost;dbname=module6;charset=utf8mb4";
         $login = "root";

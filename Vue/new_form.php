@@ -5,8 +5,9 @@
 
         </div>
         <div class="col-9">
-            <form action="new.php" method="GET">
-
+            <form method="POST">
+            <input type="hidden" name="id" value="<?php echo $data_form["id"] ?>">
+           
                 <div class="mb-3">
                     <label for="prenom">prenom</label>
                     <input type="prenom" name="prenom" id="prenom" class="form-control" value="<?php echo $data_form["prenom"] ?>">

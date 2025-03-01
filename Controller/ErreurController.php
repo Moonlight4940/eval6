@@ -12,5 +12,5 @@ class ErreurController extends AbstractController {
         ];
             $this->render("erreur", $data);
     }
-  
+    
 }
