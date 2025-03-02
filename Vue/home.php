@@ -32,7 +32,7 @@
                             <td>
                             <a href="<?php echo URL; ?>?page=update&id=<?php echo $etudiant["id"]; ?>" class="btn btn-outline-dark me-3 mb-1 btn-sm">update</a>
                            
-                            <a href="<?php echo URL; ?>?page=delete&id=<?php echo $etudiant["id"]; ?>" class="btn btn-outline-danger me-3 btn-sm" onclick="return confirm('êtes vous sûr de vouloir supprimer?')">delete</a>
+                            <a href="<?php echo URL ?>?page=delete&id=<?php echo $etudiant["id"] ?>" class="btn btn-outline-danger me-3 btn-sm" onclick="return confirm('êtes vous sûr de vouloir supprimer?')">delete</a>
                             </td>
                         </tr>
                     <?php endforeach ?>

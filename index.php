@@ -42,7 +42,8 @@ $routes = [
     "/" => ["home","FrontController"],
     "new_form" => [ "new_form","FrontController"],
    "update" =>["update", "FrontController"],
-   "profile" =>["profile", "FrontController"]
+   "profile" =>["profile", "FrontController"],
+   "erreur" =>["erreur", "FrontController"]
 ];
 
 

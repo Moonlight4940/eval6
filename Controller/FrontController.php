@@ -31,7 +31,7 @@ class FrontController extends AbstractController
         //var_dump($_POST);
 
        //echo "Méthode new_form appelée avec id: " . ($id !== null ? $id : 'aucun ID');
-        $id = "";
+        //$id = "";
         $prenom = "";
         $nom = "";
         $email = "";
@@ -106,15 +106,15 @@ class FrontController extends AbstractController
        
 
         $id = $_GET["id"] ?? null;
-        if(!$id){
+        /*if(!$id){
             echo "ID est Invalid";
             return;
         }
-        
+        */
         
            $etudiants = BDD::getInstance()->query("SELECT * FROM etudiants WHERE id = :id", ["id" => $id]);  
         
-        
+
         if(empty($etudiants)){
             $data = [
                 "titre" => "impossible de supprimer le profil etudiant",
@@ -125,23 +125,23 @@ class FrontController extends AbstractController
                 ];
             $this->render("erreur" , $data);
             die(); 
-        
-         
-    try {
-        BDD::getInstance()->query("DELETE FROM etudiants WHERE id = :id", ["id" => $id]);
-    } catch (Exception $e) {
-        error_log("Error in delete: " . $e->getMessage());
-        echo "An error occurred.";
-        return;
-    }       
+            }
+            var_dump($id);     
+            try {
+                BDD::getInstance()->query("DELETE FROM etudiants WHERE id = :id", ["id" => $id]);
+            } catch (Exception $e) {
+                error_log("Erreur delete " . $e->getMessage());
+                echo "une erreur est survenu.";
+                return;
+            }       
 
 
-        header("Location:" . URL ."?");
-        exit;
-          
-        
-     }
-    }
+                header("Location:" . URL ."?");
+                exit;
+                
+            
+            }
+    
 
     
     public function update(int $id)
@@ -228,7 +228,9 @@ class FrontController extends AbstractController
             "erreurs" => $erreurs,
         ];
         $this->render("update", $data);
-    }
+       }  
+    
+ 
 
     public function profile(string $id)
     { 
@@ -273,4 +275,5 @@ class FrontController extends AbstractController
         ];
        $this->render("profile", $data);
     }
+
 }
