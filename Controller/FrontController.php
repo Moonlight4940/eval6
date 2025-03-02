@@ -144,9 +144,10 @@ class FrontController extends AbstractController
     
 
     
-    public function update(int $id)
+    public function update(string $id)
     {
        
+        
         $etudiants = BDD::getInstance()->query("SELECT * FROM etudiants WHERE id = :id", ["id" => $id]);
 
         if (empty($etudiants)) {
@@ -177,14 +178,19 @@ class FrontController extends AbstractController
             $email = isset($_POST["email"]) ? $_POST["email"] : $email;
             $cv = isset($_POST["cv"]) ? $_POST["cv"] : $cv;
 
-            if (isset($_POST["dt_naissance"]) ? $_POST["dt_naissance"] : $dt_naissance){ 
+            $dt_naissance = isset($_POST["dt_naissance"]) ? $_POST["dt_naissance"] : $dt_naissance;
             
-            $dt_naissance = DateTime::createFromFormat('d/m/Y', $_POST["dt_naissance"])->format('Y-m-d');
-            }
+           
+            
             $isAdmin = isset($_POST["isAdmin"]) && $_POST["isAdmin"] ? 1 : 0;
 
              
-
+            
+            $etudiants = BDD::getInstance()->query("SELECT * FROM etudiants WHERE email = :email_form AND id = :id" , [
+                "email_form" => $email  ,
+                "id" => $id
+                ]
+            );
 
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 $erreurs[] = "l'email n'est pas conforme";
@@ -197,6 +203,8 @@ class FrontController extends AbstractController
             }
          
             if (count($erreurs) === 0 && !empty($_POST)) {
+                $dt_naissance = DateTime::createFromFormat('d/m/Y', $dt_naissance)->format('Y-m-d'); 
+               
                 BDD::getInstance()->query("UPDATE etudiants SET prenom = :prenom, nom = :nom, email = :email, cv = :cv, dt_naissance = :dt_naissance, isAdmin = :isAdmin, WHERE id = :id", [
                     "id" => $id,
                     "prenom" => $prenom,
@@ -206,7 +214,14 @@ class FrontController extends AbstractController
                     "dt_naissance" => $dt_naissance,
                     "isAdmin" => $isAdmin,
                 ]);
-           
+                $_SESSION['updated_data'] = [
+                    "prenom" => $prenom,
+                    "nom" => $nom,
+                    "email" => $email,
+                    "cv" => $cv,
+                    "dt_naissance" => $dt_naissance,
+                    "isAdmin" => $isAdmin
+                ];
             }
             header("Location: " . URL . "?");
             die();
@@ -225,7 +240,7 @@ class FrontController extends AbstractController
                 "dt_naissance" => $dt_naissance,
                 "isAdmin" => $isAdmin,
             ],
-            "erreurs" => $erreurs,
+            "erreurs" => $erreurs
         ];
         $this->render("update", $data);
        }  
